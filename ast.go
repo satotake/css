@@ -7,16 +7,17 @@ type Node interface {
 	node()
 }
 
-func (_ *StyleSheet) node()     {}
-func (_ Rules) node()           {}
-func (_ *AtRule) node()         {}
-func (_ *QualifiedRule) node()  {}
-func (_ Declarations) node()    {}
-func (_ *Declaration) node()    {}
-func (_ ComponentValues) node() {}
-func (_ *SimpleBlock) node()    {}
-func (_ *Function) node()       {}
-func (_ *Token) node()          {}
+func (_ *StyleSheet) node()       {}
+func (_ Rules) node()             {}
+func (_ *AtRule) node()           {}
+func (_ *QualifiedRule) node()    {}
+func (_ Declarations) node()      {}
+func (_ *Declaration) node()      {}
+func (_ ComponentValues) node()   {}
+func (_ *SimpleBlock) node()      {}
+func (_ *DeclarationBlock) node() {}
+func (_ *Function) node()         {}
+func (_ *Token) node()            {}
 
 // StyleSheet represents a top-level CSS3 stylesheet.
 type StyleSheet struct {
@@ -39,14 +40,14 @@ func (_ *QualifiedRule) rule() {}
 type AtRule struct {
 	Name    string
 	Prelude ComponentValues
-	Block   *SimpleBlock
+	Block   Block
 	Pos     Pos
 }
 
 // QualifiedRule represents an unnamed rule that includes a prelude and block.
 type QualifiedRule struct {
 	Prelude ComponentValues
-	Block   *SimpleBlock
+	Block   Block
 	Pos     Pos
 }
 
@@ -86,11 +87,27 @@ func (_ *SimpleBlock) componentValue() {}
 func (_ *Function) componentValue()    {}
 func (_ *Token) componentValue()       {}
 
+// Block represents a Block in Rule
+type Block interface {
+	Node
+	block()
+}
+
+func (_ *SimpleBlock) block()      {}
+func (_ *DeclarationBlock) block() {}
+
 // SimpleBlock represents a {-block, [-block, or (-block.
 type SimpleBlock struct {
 	Token  *Token
 	Values ComponentValues
 	Pos    Pos
+}
+
+// DeclarationBlock represents parsed SimpleBlock with ParseDeclaration
+type DeclarationBlock struct {
+	Token        *Token
+	Declarations Declarations
+	Pos          Pos
 }
 
 // Function represents a function call with a list of arguments.
@@ -196,6 +213,8 @@ func Position(n Node) Pos {
 			return Position(n[0])
 		}
 	case *SimpleBlock:
+		return n.Pos
+	case *DeclarationBlock:
 		return n.Pos
 	case *Function:
 		return n.Pos

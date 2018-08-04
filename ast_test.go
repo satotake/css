@@ -9,7 +9,7 @@ import (
 func TestNode(t *testing.T) {
 	var a []Node
 	a = append(a, &StyleSheet{}, &AtRule{}, &QualifiedRule{}, &Declaration{})
-	a = append(a, &SimpleBlock{}, &Function{}, &Token{})
+	a = append(a, &SimpleBlock{}, &DeclarationBlock{}, &Function{}, &Token{})
 	a = append(a, Rules{}, Declarations{}, ComponentValues{})
 	for _, n := range a {
 		n.node()
@@ -51,6 +51,7 @@ func TestPosition(t *testing.T) {
 		{in: ComponentValues{&Token{Pos: Pos{1, 2}}}, pos: Pos{1, 2}},
 		{in: ComponentValues{}, pos: Pos{}},
 		{in: &SimpleBlock{Pos: Pos{1, 2}}, pos: Pos{1, 2}},
+		{in: &DeclarationBlock{Pos: Pos{1, 2}}, pos: Pos{1, 2}},
 		{in: &Function{Pos: Pos{1, 2}}, pos: Pos{1, 2}},
 		{in: &Token{Pos: Pos{1, 2}}, pos: Pos{1, 2}},
 	}

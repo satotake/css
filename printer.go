@@ -112,6 +112,30 @@ func (p *Printer) Print(w io.Writer, n Node) (err error) {
 			_, _ = w.Write([]byte{')'})
 		}
 
+	case *DeclarationBlock:
+		if n == nil {
+			return nil
+		}
+		switch n.Token.Tok {
+		case LBraceToken:
+			_, _ = w.Write([]byte{'{'})
+		case LBrackToken:
+			_, _ = w.Write([]byte{'['})
+		case LParenToken:
+			_, _ = w.Write([]byte{'('})
+		}
+
+		_ = p.Print(w, n.Declarations)
+
+		switch n.Token.Tok {
+		case LBraceToken:
+			_, _ = w.Write([]byte{'}'})
+		case LBrackToken:
+			_, _ = w.Write([]byte{']'})
+		case LParenToken:
+			_, _ = w.Write([]byte{')'})
+		}
+
 	case *Function:
 		if n == nil {
 			return nil
